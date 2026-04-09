@@ -1,0 +1,7 @@
+feature,feature_label,vif
+sleep_stress_balance,Sleep-Stress Balance,7.341271796314751
+sleep_deficit_7h,Sleep Deficit (vs 7h),4.626653992950727
+age,Age,3.0884136365968824
+map_bp,Mean Arterial Pressure,2.895435495674246
+heart_rate,Heart Rate,2.225791194543024
+pulse_pressure,Pulse Pressure,1.999597628626905

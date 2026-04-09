@@ -1,0 +1,6 @@
+,age,age,sleep_duration,sleep_duration,quality_of_sleep,quality_of_sleep,physical_activity_level,physical_activity_level,stress_level,stress_level,heart_rate,heart_rate,daily_steps,daily_steps,systolic_bp,systolic_bp,diastolic_bp,diastolic_bp
+,mean,std,mean,std,mean,std,mean,std,mean,std,mean,std,mean,std,mean,std,mean,std
+sleep_disorder,,,,,,,,,,,,,,,,,,
+None,39.04,7.83,7.36,0.73,7.63,0.98,57.95,20.93,5.11,1.59,69.02,2.66,6852.97,1393.47,124.05,5.73,81.0,3.99
+Insomnia,43.52,4.81,6.59,0.39,6.53,0.8,46.82,11.75,5.87,1.46,70.47,4.95,5901.3,1000.33,132.04,3.94,86.86,3.18
+Sleep Apnea,49.71,8.99,7.03,0.97,7.21,1.65,74.79,17.93,5.67,2.33,73.09,5.12,7619.23,2168.19,137.77,5.14,92.72,4.49

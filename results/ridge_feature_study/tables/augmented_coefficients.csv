@@ -1,0 +1,18 @@
+feature,feature_label,coefficient,abs_coefficient
+num__diastolic_bp,Diastolic BP,0.26751623829616694,0.26751623829616694
+num__map_bp,Mean Arterial Pressure,0.25913303624417927,0.25913303624417927
+num__systolic_bp,Systolic BP,0.24155753398776952,0.24155753398776952
+num__age,Age,0.22775165368528758,0.22775165368528758
+cat__bmi_category_Overweight,BMI Category: Overweight,0.2112979584139215,0.2112979584139215
+num__quality_of_sleep,Quality of Sleep,-0.15420334115575832,0.15420334115575832
+num__sleep_duration,Sleep Duration,-0.14029350810218555,0.14029350810218555
+num__sleep_deficit_7h,Sleep Deficit (vs 7h),0.10271096242558148,0.10271096242558148
+cat__gender_Male,Gender: Male,-0.10226752858468141,0.10226752858468141
+num__heart_rate,Heart Rate,0.10170293044013508,0.10170293044013508
+num__pulse_pressure,Pulse Pressure,0.10149260266176004,0.10149260266176004
+num__sleep_stress_balance,Sleep-Stress Balance,-0.07235778476074947,0.07235778476074947
+num__steps_per_activity,Steps per Activity,-0.06817262338522918,0.06817262338522918
+num__daily_steps,Daily Steps,-0.06490547610289862,0.06490547610289862
+num__physical_activity_level,Physical Activity Level,-0.0366206171492143,0.0366206171492143
+num__stress_level,Stress Level,0.015802134309998397,0.015802134309998397
+cat__bmi_category_Obese,BMI Category: Obese,0.01068087856675819,0.01068087856675819

@@ -1,0 +1,28 @@
+feature,feature_label,group1,group2,meandiff,p-adj,lower,upper,reject
+age,Age,Insomnia,None,-4.483,0.0,-6.8474,-2.1185,True
+age,Age,Insomnia,Sleep Apnea,6.1856,0.0,3.3187,9.0526,True
+age,Age,None,Sleep Apnea,10.6686,0.0,8.3154,13.0218,True
+sleep_duration,Sleep Duration,Insomnia,None,0.7688,0.0,0.5391,0.9986,True
+sleep_duration,Sleep Duration,Insomnia,Sleep Apnea,0.4424,0.0006,0.1639,0.721,True
+sleep_duration,Sleep Duration,None,Sleep Apnea,-0.3264,0.0025,-0.5551,-0.0977,True
+quality_of_sleep,Quality of Sleep,Insomnia,None,1.0931,0.0,0.744,1.4422,True
+quality_of_sleep,Quality of Sleep,Insomnia,Sleep Apnea,0.6727,0.0006,0.2494,1.096,True
+quality_of_sleep,Quality of Sleep,None,Sleep Apnea,-0.4204,0.0129,-0.7679,-0.073,True
+physical_activity_level,Physical Activity Level,Insomnia,None,11.1316,0.0,5.2791,16.9841,True
+physical_activity_level,Physical Activity Level,Insomnia,Sleep Apnea,27.9767,0.0,20.8803,35.0731,True
+physical_activity_level,Physical Activity Level,None,Sleep Apnea,16.8451,0.0,11.0204,22.6698,True
+stress_level,Stress Level,Insomnia,None,-0.756,0.0034,-1.3011,-0.2109,True
+stress_level,Stress Level,Insomnia,Sleep Apnea,-0.2035,0.7492,-0.8644,0.4575,False
+stress_level,Stress Level,None,Sleep Apnea,0.5525,0.0448,0.01,1.095,True
+heart_rate,Heart Rate,Insomnia,None,-1.4493,0.0123,-2.6406,-0.2579,True
+heart_rate,Heart Rate,Insomnia,Sleep Apnea,2.6222,0.0001,1.1777,4.0668,True
+heart_rate,Heart Rate,None,Sleep Apnea,4.0715,0.0,2.8858,5.2572,True
+daily_steps,Daily Steps,Insomnia,None,951.6693,0.0,476.6305,1426.7081,True
+daily_steps,Daily Steps,Insomnia,Sleep Apnea,1717.9321,0.0,1141.9303,2293.9339,True
+daily_steps,Daily Steps,None,Sleep Apnea,766.2627,0.0005,293.4823,1239.0432,True
+systolic_bp,Systolic BP,Insomnia,None,-7.9933,0.0,-9.6426,-6.344,True
+systolic_bp,Systolic BP,Insomnia,Sleep Apnea,5.7303,0.0,3.7305,7.7301,True
+systolic_bp,Systolic BP,None,Sleep Apnea,13.7236,0.0,12.0822,15.365,True
+diastolic_bp,Diastolic BP,Insomnia,None,-5.8571,0.0,-7.0889,-4.6254,True
+diastolic_bp,Diastolic BP,Insomnia,Sleep Apnea,5.8608,0.0,4.3672,7.3544,True
+diastolic_bp,Diastolic BP,None,Sleep Apnea,11.7179,0.0,10.492,12.9439,True

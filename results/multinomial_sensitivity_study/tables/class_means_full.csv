@@ -1,0 +1,4 @@
+sleep_disorder,age,heart_rate,map_bp,pulse_pressure,sleep_deficit_7h,sleep_stress_balance
+None,39.04,69.02,95.35,43.05,0.17,2.51
+Insomnia,43.52,70.47,101.92,45.18,0.47,0.66
+Sleep Apnea,49.71,73.09,107.74,45.05,0.45,1.54

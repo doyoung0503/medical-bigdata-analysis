@@ -1,0 +1,10 @@
+feature,feature_label,coefficient,abs_coefficient
+num__map_bp,Mean Arterial Pressure,0.008810927198457098,0.008810927198457098
+num__age,Age,0.006005534178436527,0.006005534178436527
+num__pulse_pressure,Pulse Pressure,0.005582554709717813,0.005582554709717813
+num__sleep_deficit_7h,Sleep Deficit (vs 7h),0.005005444826040376,0.005005444826040376
+cat__bmi_category_Overweight,BMI Category: Overweight,0.004902232909848213,0.004902232909848213
+num__heart_rate,Heart Rate,0.0042810491637724395,0.0042810491637724395
+num__sleep_stress_balance,Sleep-Stress Balance,-0.0034905380273686604,0.0034905380273686604
+cat__gender_Male,Gender: Male,-0.001993152962317902,0.001993152962317902
+cat__bmi_category_Obese,BMI Category: Obese,0.0002972592814255281,0.0002972592814255281
