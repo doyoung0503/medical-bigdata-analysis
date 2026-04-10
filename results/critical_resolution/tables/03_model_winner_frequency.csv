@@ -1,0 +1,13 @@
+scoring,model,model_label,winner_count,winner_share
+neg_log_loss,compressed,Compressed Derived,4,0.1
+neg_log_loss,enhanced,Compressed + Interaction,6,0.15
+neg_log_loss,orig_quality_hr,Original: Quality + HR,11,0.275
+neg_log_loss,orig_quality_pa,Original: Quality + PA,12,0.3
+neg_log_loss,orig_sleep_hr,Original: Sleep + HR,3,0.075
+neg_log_loss,orig_sleep_pa,Original: Sleep + PA,4,0.1
+roc_auc,compressed,Compressed Derived,5,0.125
+roc_auc,enhanced,Compressed + Interaction,3,0.075
+roc_auc,orig_quality_hr,Original: Quality + HR,9,0.225
+roc_auc,orig_quality_pa,Original: Quality + PA,11,0.275
+roc_auc,orig_sleep_hr,Original: Sleep + HR,8,0.2
+roc_auc,orig_sleep_pa,Original: Sleep + PA,4,0.1

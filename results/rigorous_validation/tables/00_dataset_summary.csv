@@ -1,0 +1,7 @@
+metric,value
+Total rows,374
+Unique predictor profiles,109
+Duplicated rows by predictor profile,265
+Largest profile repetition count,13
+Number of predictor profiles repeated >=2 times,80
+Number of predictor profiles repeated >=3 times,50
