@@ -23,6 +23,8 @@
 5. 다항 로지스틱 회귀와 민감도 분석
 6. 후속 엄밀성 검증
 7. 비판 포인트 해소를 위한 추가 검증
+8. grouped bootstrap 모델 비교와 변수 안정성 후속 검증
+9. exact-row dedup sensitivity와 nested grouped bootstrap 최종 보강
 
 핵심 원칙은 항상 같았다.
 
@@ -276,66 +278,136 @@ subtype 차이는 분명했다.
 
 가장 중요한 결과는 아래와 같았다.
 
-1. `prediction-first` 기준에서는 `Original: Quality + PA`가 가장 설득력 있었다.
+1. repeated grouped 기준에서는 `Original: Quality + PA`가 prediction-first 기본형으로 가장 설득력 있었다.
    - repeated grouped `neg_log_loss` 기준 winner share `0.300`
    - `ROC-AUC 0.936`
    - `F1 0.895`
    - `Brier 0.075`
-2. `Original: Quality + HR`도 매우 근접했고,
-   `Original: Sleep + PA`는 self-reported quality를 덜 쓰는 보수적 baseline으로 여전히 경쟁력이 있었다.
-3. threshold 문제는 repeated grouped 재검증으로 크게 완화됐고,
+2. `Original: Quality + HR`도 매우 근접했고, 이후 grouped bootstrap까지 포함하면 두 모델을 같은 quality-based top family로 보는 편이 더 정확해졌다.
+3. `Original: Sleep + PA`는 self-reported quality를 덜 쓰는 보수적 baseline으로 여전히 경쟁력이 있었다.
+4. threshold 문제는 repeated grouped 재검증으로 크게 완화됐고,
    추가 calibration보다 `neg_log_loss` 기준 튜닝이 더 직접적으로 확률 품질을 개선했다.
-4. profile-cluster GEE sensitivity analysis에서도 `Diastolic BP`는 안정적이었다.
-5. quality 기반 상위 모델에서는 `Quality of Sleep`도 유의한 보호 방향 신호로 유지됐다.
-6. repeated grouped multinomial validation에서도 `accuracy 0.880`, `macro-F1 0.849`, `macro-AUC 0.911`로 subtype 구조가 유지됐다.
+5. profile-cluster GEE sensitivity analysis에서도 `Diastolic BP`는 안정적이었다.
+6. quality 기반 상위 모델에서는 `Quality of Sleep`도 유의한 보호 방향 신호로 유지됐다.
+7. repeated grouped multinomial validation에서도 `accuracy 0.880`, `macro-F1 0.849`, `macro-AUC 0.911`로 subtype 구조가 유지됐다.
 
 ### 어떻게 해석했는가
 
 이 단계는 최종 결론을 더 정교하게 만들었다.
 
-1. “절대적 단일 최적 모델”보다는 `목적에 따라 권고가 달라진다`고 보는 것이 맞다.
-2. 예측 성능을 우선하면 `Quality + PA`가 가장 합리적이다.
-3. 측정 보수성과 설명 단순성을 중시하면 `Sleep + PA`도 충분히 좋은 baseline이다.
-4. 어떤 경우에도 `Diastolic BP`는 가장 안정적인 핵심 축이다.
+1. “절대적 단일 최적 모델”보다는 `목적과 재표본화 기준에 따라 권고가 달라진다`고 보는 것이 맞다.
+2. repeated grouped 기준에서는 `Quality + PA`가 prediction-first 기본형으로 적합했다.
+3. grouped bootstrap까지 포함하면 `Quality + PA / Quality + HR`를 같은 최상위 quality-based family로 읽는 편이 더 엄밀하다.
+4. 측정 보수성과 설명 단순성을 중시하면 `Sleep + PA`도 충분히 좋은 baseline이다.
+5. 어떤 경우에도 `Diastolic BP`는 최종 고정 모델 안에서 가장 안정적인 핵심 축이다.
 
-## 10. 최종적으로 남은 핵심 메시지
+## 10. 8단계: grouped bootstrap 모델 비교와 변수 안정성 후속 검증
+
+### 왜 이 실험이 추가로 필요했는가
+
+비판 포인트 해소 실험까지 끝난 뒤에도 마지막으로 두 질문이 남았다.
+
+1. 상위 모델 간 차이가 실제로도 충분히 크다고 볼 수 있는가
+2. 최종 변수들이 표본 재추출에도 안정적으로 남는가
+
+즉, 이 단계의 목적은 “최종 권고를 정말 하나로 좁힐 수 있는가”와 “핵심 변수라는 표현이 실제로 타당한가”를 마지막으로 검증하는 데 있었다.
+
+### 무엇을 했는가
+
+1. grouped bootstrap OOB model comparison
+2. pairwise superiority analysis
+3. L1 stability selection
+4. final `Quality + PA` model coefficient bootstrap
+
+### 무엇이 나왔는가
+
+1. grouped bootstrap 기준으로는 `Quality + PA`와 `Quality + HR`가 사실상 같은 최상위 quality-based model family로 남았다.
+2. `Quality + PA`는 `Sleep + PA`보다 Brier 측면에서 더 자주 좋았지만, `Quality + HR`를 압도하는 수준은 아니었다.
+3. stability selection에서는 `BMI Risk`, `Quality of Sleep`, `Systolic BP`, `Diastolic BP`가 가장 자주 살아남았다.
+4. 최종 `Quality + PA` 고정 모델 coefficient bootstrap에서는 `Diastolic BP`, `BMI Risk`, `Quality of Sleep`, `Age`의 부호 안정성이 모두 매우 높았다.
+
+### 어떻게 해석했는가
+
+이 단계는 최종 메시지를 한 단계 더 정교하게 만들었다.
+
+1. 예측 모델 추천은 더 이상 `Quality + PA` 단독이라기보다 `Quality + PA / Quality + HR` quality-based family로 보는 것이 맞다.
+2. 변수 수준에서는 개별 `Diastolic BP`만이 아니라 `혈압축 + BMI Risk + Quality of Sleep`가 가장 강건한 축이라고 해석하는 편이 더 정확하다.
+3. 다만 최종 `Quality + PA` 고정 모델 안에서는 `Diastolic BP`가 가장 안정적인 양(+) 방향 신호라는 결론이 유지됐다.
+
+## 11. 9단계: exact-row dedup sensitivity와 nested grouped bootstrap 최종 보강
+
+### 왜 이 실험이 마지막으로 더 필요했는가
+
+앞 단계까지 오면서 결론은 상당히 단단해졌지만, 두 비판 포인트가 남아 있었다.
+
+1. 단변량 검정은 full-row 기준인데 예측 검증은 grouped 기준이라 독립성 기준이 완전히 일치하지 않았다.
+2. grouped bootstrap 모델 비교는 이전 CV에서 고른 하이퍼파라미터를 고정해 비교했기 때문에, 엄밀히는 fixed-hyperparameter bootstrap이었다.
+
+### 무엇을 했는가
+
+1. exact-row deduplicated 단변량 재검정
+2. nested grouped bootstrap 모델 재비교
+   - replicate마다 grouped inner CV로 `C`와 class weight를 다시 튜닝
+   - OOB test로 성능 재평가
+
+### 무엇이 나왔는가
+
+1. exact-row dedup 후에도 `Age`, `Quality of Sleep`, `Sleep Duration`, `Physical Activity Level`, `Diastolic BP`를 포함한 핵심 축은 그대로 유지됐다.
+2. 약해진 것은 `Sleep Quality per Hour`, `Steps per Activity`처럼 비율형 파생변수뿐이었다.
+3. nested grouped bootstrap 평균에서는 `Quality + PA`가 `Brier 0.076`으로 가장 좋았고, `Quality + HR`는 `F1 0.889`, winner share `0.400`으로 사실상 동급 최상위였다.
+4. 따라서 quality-based family가 최상위권이라는 해석은 fixed-hyperparameter bootstrap에만 의존한 결론이 아니게 됐다.
+
+### 어떻게 해석했는가
+
+이 마지막 보강 단계는 두 가지를 더 분명하게 만들었다.
+
+1. 메인 단변량 인사이트는 반복 row 때문에만 생긴 결과가 아니었다.
+2. `Quality + PA` operational default는 유지되지만, 이것을 통계적으로 압도적 유일 승자라고 표현하는 것은 과하다.
+
+즉, 가장 엄밀한 문장은 “`Quality + PA / Quality + HR`가 같은 최상위 family이고, `Quality + PA`는 그 안에서 확률 품질을 더 중시할 때의 practical default”다.
+
+## 12. 최종적으로 남은 핵심 메시지
 
 지금까지의 모든 실험을 순서대로 통합하면, 최종 메시지는 아래처럼 정리된다.
 
-### 10.1 변수 수준 결론
+### 11.1 변수 수준 결론
 
-가장 안정적으로 남은 변수는 `Diastolic BP`였다.
+변수군 수준에서는 `혈압축 + BMI Risk + Quality of Sleep`가 가장 안정적으로 남았다.
 
 이 결론은
 
 - robust univariate test
+- exact-row dedup sensitivity
 - deduplicated GLM
 - profile-cluster GEE sensitivity analysis
 
 를 거쳐도 유지됐다.
 
-추가로 quality 기반 상위 모델에서는 `Quality of Sleep`도 의미 있는 보호 방향 신호로 남았다.
+추가로 stability selection까지 포함하면 `BMI Risk`도 매우 안정적인 축으로 확인됐다.
 
-### 10.2 모델 수준 결론
+### 11.2 모델 수준 결론
 
-두 층위의 권고가 가장 정직하다.
+세 층위의 권고가 가장 정직하다.
 
-1. `prediction-first` 추천
+1. `prediction-first family`
+   - `Quality + PA`
+   - `Quality + HR`
+2. `operational default`
    - `Age + Quality of Sleep + Physical Activity Level + Diastolic BP + male + bmi_risk`
-2. `보수적 baseline` 추천
+3. `보수적 baseline`
    - `Age + Sleep Duration + Physical Activity Level + Diastolic BP + male + bmi_risk`
 
-### 10.3 해석 수준 결론
+### 11.3 해석 수준 결론
 
 이 분석은 단순히 “수면을 적게 자면 위험하다” 수준이 아니었다.
 
 오히려 더 안정적인 해석은 아래에 가깝다.
 
 - 수면장애는 `혈압 축 + 수면/회복 축 + 생활습관 축`이 함께 움직이는 구조다.
-- 그중에서도 가장 단단한 핵심 신호는 `이완기혈압`이다.
+- 그중에서도 최종 고정 모델 안에서 가장 단단한 핵심 신호는 `이완기혈압`이다.
 - subtype 수준에서는 `Insomnia`와 `Sleep Apnea`가 동일한 메커니즘으로 설명되지 않는다.
 
-## 11. 그래서 앞으로 또 어떤 실험을 하면 좋은가
+## 13. 그래서 앞으로 또 어떤 실험을 하면 좋은가
 
 이번 분석으로 많은 비판 포인트를 해소했지만, 완전히 끝난 것은 아니다.
 
@@ -350,8 +422,10 @@ subtype 차이는 분명했다.
 4. subtype별 후속 개입 모델
    - `Insomnia`와 `Sleep Apnea`가 다르게 나타났으므로, 이후 개입 설계는 subtype 분리형이 더 자연스럽다.
 
-## 12. 관련 문서
+## 14. 관련 문서
 
 - [통합 메인 보고서](/Users/doyoung/Documents/Bigdata_analysis/sleep_health/results/sleep_disorder_statistical_summary_ko.md)
+- [최종 엄밀성 보강 보고서](/Users/doyoung/Documents/Bigdata_analysis/sleep_health/results/final_rigor_upgrade/final_rigor_upgrade_report_ko.md)
+- [Grouped Bootstrap 모델 비교 및 변수 안정성 후속 보고서](/Users/doyoung/Documents/Bigdata_analysis/sleep_health/results/bootstrap_stability_followup/bootstrap_stability_followup_report_ko.md)
 - [비판 포인트 해소를 위한 추가 검증 보고서](/Users/doyoung/Documents/Bigdata_analysis/sleep_health/results/critical_resolution/critical_resolution_report_ko.md)
 - [인사이트 및 활용 요약](/Users/doyoung/Documents/Bigdata_analysis/sleep_health/results/final_synthesis/insights_and_applications_ko.md)

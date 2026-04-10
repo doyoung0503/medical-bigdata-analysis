@@ -1,0 +1,32 @@
+model,model_label,best_c,best_weight,count
+compressed,Compressed Derived,0.1,None,46
+compressed,Compressed Derived,1.0,None,15
+compressed,Compressed Derived,0.1,balanced,11
+compressed,Compressed Derived,1.0,balanced,5
+compressed,Compressed Derived,10.0,None,2
+compressed,Compressed Derived,10.0,balanced,1
+enhanced,Compressed + Interaction,0.1,None,53
+enhanced,Compressed + Interaction,0.1,balanced,21
+enhanced,Compressed + Interaction,1.0,None,5
+enhanced,Compressed + Interaction,1.0,balanced,1
+orig_quality_hr,Original: Quality + HR,0.1,None,46
+orig_quality_hr,Original: Quality + HR,1.0,None,16
+orig_quality_hr,Original: Quality + HR,0.1,balanced,7
+orig_quality_hr,Original: Quality + HR,1.0,balanced,7
+orig_quality_hr,Original: Quality + HR,10.0,balanced,3
+orig_quality_hr,Original: Quality + HR,10.0,None,1
+orig_quality_pa,Original: Quality + PA,0.1,None,51
+orig_quality_pa,Original: Quality + PA,1.0,None,15
+orig_quality_pa,Original: Quality + PA,0.1,balanced,9
+orig_quality_pa,Original: Quality + PA,1.0,balanced,3
+orig_quality_pa,Original: Quality + PA,10.0,None,1
+orig_quality_pa,Original: Quality + PA,10.0,balanced,1
+orig_sleep_hr,Original: Sleep + HR,0.1,None,48
+orig_sleep_hr,Original: Sleep + HR,0.1,balanced,17
+orig_sleep_hr,Original: Sleep + HR,1.0,None,9
+orig_sleep_hr,Original: Sleep + HR,1.0,balanced,5
+orig_sleep_hr,Original: Sleep + HR,10.0,balanced,1
+orig_sleep_pa,Original: Sleep + PA,0.1,None,52
+orig_sleep_pa,Original: Sleep + PA,1.0,None,15
+orig_sleep_pa,Original: Sleep + PA,0.1,balanced,9
+orig_sleep_pa,Original: Sleep + PA,1.0,balanced,4
