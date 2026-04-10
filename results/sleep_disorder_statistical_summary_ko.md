@@ -19,7 +19,7 @@
 5. 비판 포인트 해소를 위한 추가 검증
    - repeated grouped model comparison
    - tuning objective 비교
-   - cluster-aware GEE
+   - profile-cluster GEE sensitivity analysis
    - repeated grouped multinomial validation
 
 즉, 이 보고서는 “처음 얻은 결과”가 아니라, **후속 검증까지 반영한 최신 결론**을 메인 결과로 제시한다.
@@ -119,7 +119,7 @@
 - repeated grouped `neg_log_loss` 기준 winner share가 가장 높았다 (`0.300`).
 - 같은 기준에서 `Brier = 0.075`, `ECE = 0.085`로 확률 품질이 가장 좋았다.
 - `ROC-AUC = 0.936`, `F1 = 0.895` 수준으로 분리력도 충분했다.
-- 추가 cluster-aware GEE에서 `Quality of Sleep`과 `Diastolic BP`가 모두 유의한 신호로 유지됐다.
+- 추가 profile-cluster GEE sensitivity analysis에서 `Quality of Sleep`과 `Diastolic BP`가 모두 유의한 신호로 유지됐다.
 
 즉, **예측확률의 품질과 screening 성능을 함께 볼 때는 quality 기반 원 변수 모델이 가장 설득력 있다.**
 
@@ -129,7 +129,7 @@
 
 - repeated grouped `neg_log_loss` 기준 `ROC-AUC = 0.938`, `F1 = 0.898`로 가장 높았다.
 - 다만 `Brier`와 `winner share`에서는 `Quality + PA`와 거의 차이가 없었다.
-- cluster-aware GEE에서는 `Quality of Sleep`과 `Diastolic BP`가 유의했고, `Heart Rate`는 독립 효과가 강하게 남지 않았다.
+- profile-cluster GEE sensitivity analysis에서는 `Quality of Sleep`과 `Diastolic BP`가 유의했고, `Heart Rate`는 독립 효과가 강하게 남지 않았다.
 
 #### `Original: Sleep + PA`
 
@@ -163,12 +163,12 @@
 
 1. 강건한 단변량 검정에서 가장 강한 혈압 축으로 남았다.
 2. deduplicated GLM에서 OR = `1.276`, 95% CI = `1.100–1.688`이었다.
-3. cluster-aware GEE에서도 OR = `1.322`, 95% CI = `1.092–1.600`으로 유지됐다.
+3. profile-cluster GEE sensitivity analysis에서도 OR = `1.302`, 95% CI = `1.077–1.575`로 유지됐다.
 
 추가로 quality 기반 상위 모델에서는 `Quality of Sleep`도 안정적인 보호 방향 신호로 반복 확인됐다.
 
-- `Original: Quality + HR` cluster-aware GEE: `Quality of Sleep OR = 0.344`, 95% CI = `0.167–0.711`
-- `Original: Quality + PA` cluster-aware GEE: `Quality of Sleep OR = 0.365`, 95% CI = `0.172–0.773`
+- `Original: Quality + HR` profile-cluster GEE sensitivity analysis: `Quality of Sleep OR = 0.344`, 95% CI = `0.167–0.711`
+- `Original: Quality + PA` profile-cluster GEE sensitivity analysis: `Quality of Sleep OR = 0.365`, 95% CI = `0.172–0.773`
 
 반면 아래 변수들은 모델에 기여하더라도 독립 효과는 더 조심해서 해석하는 편이 맞았다.
 
@@ -192,7 +192,7 @@
 하지만 최신 추가 검증까지 포함하면 결론이 더 정교해진다.
 
 1. 혈압과 수면 관련 축이 중요하다는 큰 방향은 유지된다.
-2. 다만 “최종 추천 모델”은 단순 AUC 최대화가 아니라, `tuning objective`, `확률 품질`, `cluster-aware inference`까지 함께 봐야 한다.
+2. 다만 “최종 추천 모델”은 단순 AUC 최대화가 아니라, `tuning objective`, `확률 품질`, `profile-cluster sensitivity inference`까지 함께 봐야 한다.
 3. 그 기준을 모두 적용하면, prediction-first 추천은 `Quality + PA`, 보수적 baseline은 `Sleep + PA`처럼 **두 층위의 권고**로 정리하는 것이 더 정확하다.
 
 ### 7.2 실무적으로 어떻게 활용할 수 있는가

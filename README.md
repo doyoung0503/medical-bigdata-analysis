@@ -1,6 +1,6 @@
 # Medical Bigdata Analysis
 
-수면 건강 데이터셋을 기반으로 통계분석, 로지스틱 회귀, Ridge 로지스틱 회귀, 다항 로지스틱 회귀, 민감도 분석, 그리고 repeated grouped validation, calibration, cluster-aware inference까지 포함한 후속 검증을 수행한 프로젝트입니다. `dataset`의 원천 데이터와 `reference`의 분석 참고 자료를 바탕으로, 수면장애와 관련된 핵심 변수와 실제로 추천할 만한 예측 모델을 다시 정리했습니다.
+수면 건강 데이터셋을 기반으로 통계분석, 로지스틱 회귀, Ridge 로지스틱 회귀, 다항 로지스틱 회귀, 민감도 분석, 그리고 repeated grouped validation, calibration, profile-cluster GEE sensitivity analysis까지 포함한 후속 검증을 수행한 프로젝트입니다. `dataset`의 원천 데이터와 `reference`의 분석 참고 자료를 바탕으로, 수면장애와 관련된 핵심 변수와 실제로 추천할 만한 예측 모델을 다시 정리했습니다.
 
 ![Representative Figure](results/critical_resolution/figures/01_repeated_grouped_model_stability.png)
 
@@ -31,7 +31,7 @@
 
 - Welch/Kruskal/FDR를 거친 후에도 혈압, 나이, 수면시간, 활동량, 수면의 질 축은 강건하게 유지됐다.
 - repeated grouped `neg_log_loss` 기준 예측 우선 모델은 `Age + Quality of Sleep + Physical Activity Level + Diastolic BP + male + bmi_risk` 였고, `Sleep + PA` 조합은 self-reported quality를 덜 쓰는 보수적 baseline으로 매우 근접한 성능을 유지했다.
-- 가장 안정적으로 남는 변수는 여전히 `Diastolic BP`이며, cluster-aware GEE에서도 OR `1.322 (95% CI 1.092–1.600)` 으로 유지됐다.
+- 가장 안정적으로 남는 변수는 여전히 `Diastolic BP`이며, profile-cluster GEE sensitivity analysis에서도 OR `1.302 (95% CI 1.077–1.575)` 으로 유지됐다.
 - quality 기반 상위 모델에서는 `Quality of Sleep`도 유의한 보호 방향 신호로 반복 확인됐다.
 - threshold 안정성은 추가 calibration보다 `neg_log_loss` 기반 튜닝에서 더 직접적으로 개선됐고, grouped multinomial validation에서도 `macro-F1 0.849`, `macro-AUC 0.911`로 subtype 구조가 유지됐다.
 

@@ -269,7 +269,7 @@ subtype 차이는 분명했다.
 1. repeated grouped model comparison
 2. `roc_auc` vs `neg_log_loss` tuning objective 비교
 3. repeated grouped threshold / calibration 재검증
-4. cluster-aware GEE
+4. profile-cluster GEE sensitivity analysis
 5. repeated grouped multinomial validation
 
 ### 무엇이 나왔는가
@@ -285,7 +285,7 @@ subtype 차이는 분명했다.
    `Original: Sleep + PA`는 self-reported quality를 덜 쓰는 보수적 baseline으로 여전히 경쟁력이 있었다.
 3. threshold 문제는 repeated grouped 재검증으로 크게 완화됐고,
    추가 calibration보다 `neg_log_loss` 기준 튜닝이 더 직접적으로 확률 품질을 개선했다.
-4. cluster-aware GEE에서도 `Diastolic BP`는 안정적이었다.
+4. profile-cluster GEE sensitivity analysis에서도 `Diastolic BP`는 안정적이었다.
 5. quality 기반 상위 모델에서는 `Quality of Sleep`도 유의한 보호 방향 신호로 유지됐다.
 6. repeated grouped multinomial validation에서도 `accuracy 0.880`, `macro-F1 0.849`, `macro-AUC 0.911`로 subtype 구조가 유지됐다.
 
@@ -310,7 +310,7 @@ subtype 차이는 분명했다.
 
 - robust univariate test
 - deduplicated GLM
-- cluster-aware GEE
+- profile-cluster GEE sensitivity analysis
 
 를 거쳐도 유지됐다.
 

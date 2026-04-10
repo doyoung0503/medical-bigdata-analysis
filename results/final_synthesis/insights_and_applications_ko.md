@@ -8,7 +8,7 @@
 
 - robust test에서 강했다.
 - deduplicated GLM에서도 유지됐다.
-- cluster-aware GEE에서도 유지됐다.
+- profile-cluster GEE sensitivity analysis에서도 유지됐다.
 
 즉, 어떤 모델을 쓰더라도 **이완기혈압은 수면장애 위험과 가장 안정적으로 연결되는 축**이라고 볼 수 있다.
 

@@ -20,7 +20,7 @@
 ### 2.2 반복 grouped calibration / threshold 재검증
 
 - 이유: `0.5 threshold 사용 가능`이라는 문장을 single holdout이 아니라 반복 split 기준으로 확인해야 했다.
-- 방법: 기존 기본형 후보였던 `Original: Sleep + PA`에 대해
+- 방법: 최종 prediction-first 후보 `Original: Quality + PA`에 대해
   - `roc_auc` 기준 튜닝
   - `neg_log_loss` 기준 튜닝
   - `raw probability`
@@ -31,7 +31,7 @@
 
 - 이유: 예측은 전체 데이터, 해석은 deduplicated 데이터라는 층위 차이를 줄이기 위해서다.
 - 방법: 최종 모델에 대해
-  - `Clustered GEE (profile_group cluster)`
+  - `Profile-cluster GEE (profile_group cluster)`
   - `Deduplicated GLM`
   을 나란히 적합해 OR를 비교했다.
 
@@ -102,26 +102,29 @@
 
 | comparison | metric | mean_diff | ci_low | ci_high |
 | --- | --- | --- | --- | --- |
-| Original: Sleep + PA - Original: Sleep + HR | roc_auc | -0.001 | -0.018 | 0.024 |
-| Original: Sleep + PA - Original: Sleep + HR | f1 | -0.001 | -0.001 | 0.000 |
-| Original: Sleep + PA - Original: Sleep + HR | brier | 0.001 | -0.008 | 0.008 |
-| Original: Sleep + PA - Original: Sleep + HR | ece | 0.004 | -0.023 | 0.024 |
-| Original: Sleep + PA - Original: Quality + PA | roc_auc | 0.000 | -0.014 | 0.013 |
-| Original: Sleep + PA - Original: Quality + PA | f1 | -0.003 | -0.034 | 0.001 |
-| Original: Sleep + PA - Original: Quality + PA | brier | 0.006 | -0.001 | 0.017 |
-| Original: Sleep + PA - Original: Quality + PA | ece | 0.008 | -0.023 | 0.044 |
-| Original: Sleep + PA - Compressed + Interaction | roc_auc | 0.002 | -0.026 | 0.035 |
-| Original: Sleep + PA - Compressed + Interaction | f1 | 0.001 | 0.000 | 0.026 |
-| Original: Sleep + PA - Compressed + Interaction | brier | 0.003 | -0.009 | 0.010 |
-| Original: Sleep + PA - Compressed + Interaction | ece | 0.010 | -0.025 | 0.060 |
-| Original: Sleep + PA - Compressed Derived | roc_auc | 0.002 | -0.026 | 0.040 |
-| Original: Sleep + PA - Compressed Derived | f1 | -0.003 | -0.034 | 0.001 |
-| Original: Sleep + PA - Compressed Derived | brier | 0.002 | -0.007 | 0.011 |
-| Original: Sleep + PA - Compressed Derived | ece | 0.004 | -0.037 | 0.062 |
+| Original: Quality + PA - Original: Quality + HR | roc_auc | -0.002 | -0.035 | 0.019 |
+| Original: Quality + PA - Original: Quality + HR | f1 | -0.003 | -0.033 | 0.016 |
+| Original: Quality + PA - Original: Quality + HR | brier | -0.000 | -0.008 | 0.007 |
+| Original: Quality + PA - Original: Quality + HR | ece | 0.003 | -0.028 | 0.045 |
+| Original: Quality + PA - Original: Sleep + PA | roc_auc | -0.000 | -0.013 | 0.014 |
+| Original: Quality + PA - Original: Sleep + PA | f1 | 0.003 | -0.001 | 0.034 |
+| Original: Quality + PA - Original: Sleep + PA | brier | -0.006 | -0.017 | 0.001 |
+| Original: Quality + PA - Original: Sleep + PA | ece | -0.008 | -0.044 | 0.023 |
+| Original: Quality + PA - Original: Sleep + HR | roc_auc | -0.001 | -0.020 | 0.020 |
+| Original: Quality + PA - Original: Sleep + HR | f1 | 0.002 | -0.001 | 0.034 |
+| Original: Quality + PA - Original: Sleep + HR | brier | -0.005 | -0.017 | 0.007 |
+| Original: Quality + PA - Original: Sleep + HR | ece | -0.004 | -0.036 | 0.031 |
+| Original: Quality + PA - Compressed Derived | roc_auc | 0.002 | -0.019 | 0.030 |
+| Original: Quality + PA - Compressed Derived | f1 | -0.001 | -0.040 | 0.034 |
+| Original: Quality + PA - Compressed Derived | brier | -0.003 | -0.014 | 0.006 |
+| Original: Quality + PA - Compressed Derived | ece | -0.004 | -0.042 | 0.043 |
+| Original: Quality + PA - Compressed + Interaction | roc_auc | 0.002 | -0.019 | 0.032 |
+| Original: Quality + PA - Compressed + Interaction | f1 | 0.004 | -0.001 | 0.034 |
+| Original: Quality + PA - Compressed + Interaction | brier | -0.003 | -0.015 | 0.008 |
+| Original: Quality + PA - Compressed + Interaction | ece | 0.003 | -0.031 | 0.043 |
 
-- `Original: Sleep + PA`는 더 이상 단독 최우위 모델이라고 보긴 어렵다.
-- repeated grouped와 `neg_log_loss` 기준으로 보면 `Original: Quality + PA`와 `Original: Quality + HR`가 근소하게 앞섰고, `Sleep + PA`는 그 바로 뒤에서 매우 근접한 수준을 유지했다.
-- 따라서 메인 권고는 “압도적 superiority”보다 “확률 품질과 해석성을 함께 본 보수적 선택”으로 읽는 편이 맞다.
+- `Original: Quality + PA`는 repeated grouped `neg_log_loss` 기준에서 평균 `ROC-AUC=0.936`, `F1=0.895`, `Brier=0.075`, `ECE=0.085`를 기록했다.
+- 다만 paired difference를 보면 다른 상위 모델과의 차이는 여전히 작다. 따라서 메인 권고는 “압도적 superiority”보다 “확률 품질과 screening 실용성을 함께 본 prediction-first 선택”으로 읽는 편이 맞다.
 
 ## 4. threshold와 calibration 비판은 얼마나 해소됐는가
 
@@ -129,21 +132,21 @@
 
 | config | auc_mean | auc_sd | brier_mean | ece_mean | f1_default_mean | f1_tuned_mean | threshold_mean | threshold_sd | calib_slope_mean | calib_intercept_mean |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| neg_log_loss + raw | 0.935 | 0.035 | 0.081 | 0.092 | 0.892 | 0.871 | 0.504 | 0.151 | 4.822 | 5.138 |
-| neg_log_loss + platt | 0.935 | 0.035 | 0.087 | 0.095 | 0.888 | 0.858 | 0.508 | 0.155 | 3.099 | 7.719 |
-| roc_auc + platt | 0.934 | 0.034 | 0.089 | 0.099 | 0.864 | 0.859 | 0.494 | 0.150 | 19.433 | 74.710 |
-| roc_auc + raw | 0.934 | 0.034 | 0.115 | 0.158 | 0.738 | 0.852 | 0.466 | 0.153 | 70.855 | 66.662 |
+| neg_log_loss + raw | 0.938 | 0.032 | 0.075 | 0.085 | 0.896 | 0.864 | 0.535 | 0.151 | 19.195 | 29.355 |
+| neg_log_loss + platt | 0.938 | 0.032 | 0.080 | 0.088 | 0.893 | 0.863 | 0.524 | 0.156 | 10.935 | 42.256 |
+| roc_auc + platt | 0.937 | 0.030 | 0.084 | 0.095 | 0.878 | 0.862 | 0.491 | 0.135 | 1.126 | 0.373 |
+| roc_auc + raw | 0.937 | 0.030 | 0.117 | 0.167 | 0.702 | 0.832 | 0.492 | 0.143 | 5.546 | 1.387 |
 
 ### 4.2 핵심 해석
 
 - 이번에는 threshold를 고정된 하나의 holdout에서 보지 않고 repeated grouped split 전체에서 확인했다.
 - 그 결과 가장 균형이 좋았던 설정은 `neg_log_loss + raw`였다.
-- 이 설정의 평균 threshold는 `0.504`이고 표준편차는 `0.151`였다.
+- 이 설정의 평균 threshold는 `0.535`이고 표준편차는 `0.151`였다.
 - 즉 threshold가 완전히 임의적으로 흔들린 것은 아니지만, 완전히 0.5에 고정돼도 무조건 안전하다고 말할 정도로 수렴한 것도 아니었다.
 
 해석상 중요한 결론은 두 가지다.
 
-1. 이전의 “0.5 threshold가 실용적으로 작동한다”는 문장은 repeated grouped 기준에서도 **완전히 무너지지 않았다**.
+1. 이전의 “0.5 threshold가 실용적으로 작동한다”는 문장은 `Original: Quality + PA` 기준 repeated grouped 결과에서도 **완전히 무너지지 않았다**.
 2. 이번 데이터에서는 `neg_log_loss` 기준으로 직접 튜닝한 raw probability가 이미 가장 안정적이었고, Platt calibration이 항상 추가 이득을 주지는 않았다.
 
 즉, 이전 비판 포인트였던 “single holdout threshold 의존” 문제는 이번 실험으로 상당 부분 해소됐고, 동시에 **운영 기준에서는 calibration 자체보다 튜닝 objective를 확률 품질에 맞추는 것이 더 중요하다**는 구체적 지침까지 얻었다.
@@ -154,25 +157,25 @@
 
 | source | feature | feature_label | coef | odds_ratio | ci_low | ci_high | p_value |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Clustered GEE (full data) | age | Age | 0.029 | 1.030 | 0.928 | 1.143 | 0.584 |
-| Clustered GEE (full data) | sleep_duration | Sleep Duration | -0.700 | 0.497 | 0.214 | 1.153 | 0.103 |
-| Clustered GEE (full data) | physical_activity_level | Physical Activity Level | -0.021 | 0.980 | 0.943 | 1.018 | 0.293 |
-| Clustered GEE (full data) | diastolic_bp | Diastolic BP | 0.279 | 1.322 | 1.092 | 1.600 | 0.004 |
-| Clustered GEE (full data) | male | Male | -0.046 | 0.955 | 0.222 | 4.103 | 0.950 |
-| Clustered GEE (full data) | bmi_risk | BMI Risk | 1.970 | 7.174 | 1.757 | 29.290 | 0.006 |
-| Deduplicated GLM | age | Age | -0.024 | 0.976 | 0.894 | 1.067 | 0.594 |
-| Deduplicated GLM | sleep_duration | Sleep Duration | -0.275 | 0.760 | 0.326 | 1.772 | 0.525 |
-| Deduplicated GLM | physical_activity_level | Physical Activity Level | -0.023 | 0.977 | 0.949 | 1.006 | 0.124 |
-| Deduplicated GLM | diastolic_bp | Diastolic BP | 0.244 | 1.276 | 1.102 | 1.477 | 0.001 |
-| Deduplicated GLM | male | Male | 0.044 | 1.044 | 0.355 | 3.077 | 0.937 |
-| Deduplicated GLM | bmi_risk | BMI Risk | 0.702 | 2.018 | 0.528 | 7.721 | 0.305 |
+| Profile-cluster GEE (full data) | age | Age | 0.101 | 1.107 | 0.993 | 1.234 | 0.068 |
+| Profile-cluster GEE (full data) | quality_of_sleep | Quality of Sleep | -1.008 | 0.365 | 0.172 | 0.773 | 0.009 |
+| Profile-cluster GEE (full data) | physical_activity_level | Physical Activity Level | -0.011 | 0.989 | 0.954 | 1.026 | 0.557 |
+| Profile-cluster GEE (full data) | diastolic_bp | Diastolic BP | 0.264 | 1.302 | 1.077 | 1.575 | 0.006 |
+| Profile-cluster GEE (full data) | male | Male | 0.102 | 1.107 | 0.252 | 4.870 | 0.893 |
+| Profile-cluster GEE (full data) | bmi_risk | BMI Risk | 1.405 | 4.076 | 0.882 | 18.839 | 0.072 |
+| Deduplicated GLM | age | Age | 0.019 | 1.019 | 0.923 | 1.125 | 0.706 |
+| Deduplicated GLM | quality_of_sleep | Quality of Sleep | -0.501 | 0.606 | 0.333 | 1.103 | 0.101 |
+| Deduplicated GLM | physical_activity_level | Physical Activity Level | -0.018 | 0.982 | 0.954 | 1.012 | 0.238 |
+| Deduplicated GLM | diastolic_bp | Diastolic BP | 0.226 | 1.254 | 1.080 | 1.456 | 0.003 |
+| Deduplicated GLM | male | Male | 0.102 | 1.108 | 0.358 | 3.430 | 0.859 |
+| Deduplicated GLM | bmi_risk | BMI Risk | 0.353 | 1.423 | 0.353 | 5.742 | 0.620 |
 
 ### 5.2 핵심 해석
 
-- `Diastolic BP`는 clustered GEE에서도 OR=`1.322`로 유지됐고, 95% CI도 1을 넘는 안정적 신호였다.
+- `Diastolic BP`는 profile-cluster GEE에서도 OR=`1.302`로 유지됐고, 95% CI도 1을 넘는 안정적 신호였다.
 - 즉, 이전에 deduplicated 해석모델에서 보였던 핵심 메시지인 “이완기혈압 축이 가장 안정적이다”는 **cluster-aware full-data 추정에서도 유지**됐다.
-- 추가로 quality 기반 상위 모델을 cluster-aware GEE로 다시 확인해보면, `Quality of Sleep`도 `OR 0.344~0.365` 수준의 유의한 보호 방향 신호를 유지했다.
-- 반면 `male`, `heart_rate`, `physical_activity_level`은 모델별로 들어가더라도 독립 효과가 강하게 고정되지는 않았다.
+- 반면 다른 보조 변수들은 profile-cluster GEE에서 불확실성이 더 크거나 유의성이 약했다.
+- `Quality of Sleep`도 profile-cluster GEE에서 보호 방향 신호를 유지했다.
 
 따라서 이번 추가 실험으로 해석은 더 엄밀해졌다.
 
@@ -204,9 +207,9 @@
 ### 7.1 해소된 부분
 
 1. `threshold/calibration의 single-holdout 의존`
-   - repeated grouped split으로 다시 확인했고, 추가 calibration보다 `neg_log_loss` 기반 튜닝이 더 직접적으로 안정성을 회복했다.
+   - repeated grouped split으로 다시 확인했고, `Original: Quality + PA` 기준으로는 calibration을 덧붙이는 것보다 `neg_log_loss` 기반 튜닝 자체가 더 중요하다는 결론을 얻었다.
 2. `예측 성능과 회귀 해석의 데이터 층위 차이`
-   - clustered GEE를 추가해 full-data cluster-aware inference를 제시했다.
+   - profile-cluster GEE를 추가해 full-data sensitivity inference를 제시했다.
 3. `이진 screening이 subtype 정보를 과도하게 잃는 문제`
    - repeated grouped multinomial validation으로 subtype 구조가 별도로 유지됨을 확인했다.
 
@@ -218,22 +221,19 @@
 
 ## 8. 최신 기준 최종 결론
 
-이번 추가 검증까지 반영하면, 가장 엄밀한 최종 문장은 아래처럼 두 층위로 정리하는 것이 맞다.
+이번 추가 검증까지 반영하면, 가장 엄밀한 최종 문장은 아래와 같다.
 
-> 예측 성능을 우선하면 `Age + Quality of Sleep + Physical Activity Level + Diastolic BP + male + bmi_risk` 같은 quality 기반 원 변수 모델이 repeated grouped `neg_log_loss` 기준에서 근소하게 앞섰다.
+> 현재 데이터에서 `수면장애 유무` screening의 prediction-first 기본형은 `Age + Quality of Sleep + Physical Activity Level + Diastolic BP + male + bmi_risk` 조합이며, repeated grouped `neg_log_loss` 기준으로 가장 설득력 있는 확률 예측 품질을 보였다.
 
-> 반대로 self-reported quality score를 덜 쓰고 더 보수적인 생활습관형 baseline을 원하면 `Age + Sleep Duration + Physical Activity Level + Diastolic BP + male + bmi_risk` 조합도 매우 근접한 성능을 유지한다.
+동시에 실무 적용 문장은 이렇게 정리하는 것이 맞다.
 
-동시에 해석 측면에서 가장 단단한 문장은 아래다.
-
-> 어떤 모델을 쓰더라도 `Diastolic BP`는 repeated grouped validation과 cluster-aware inference를 모두 거쳐도 가장 안정적으로 유지되는 핵심 축이며, quality 기반 모델에서는 `Quality of Sleep`도 추가적인 보호 방향 신호로 반복 확인된다.
+> 어떤 모델을 쓰더라도 `Diastolic BP`는 repeated grouped validation과 profile-cluster GEE sensitivity analysis를 거쳐도 가장 안정적으로 유지되는 핵심 축이며, quality score를 활용할 수 있다면 `Quality + PA`를, 더 보수적인 baseline을 원하면 `Sleep + PA`를 함께 제시하는 것이 가장 정직하다.
 
 ## 9. 생성된 결과물
 
 - 보고서: [critical_resolution_report_ko.md](/Users/doyoung/Documents/Bigdata_analysis/sleep_health/results/critical_resolution/critical_resolution_report_ko.md)
 - 시각화: [critical_resolution figures](/Users/doyoung/Documents/Bigdata_analysis/sleep_health/results/critical_resolution/figures)
 - 표: [critical_resolution tables](/Users/doyoung/Documents/Bigdata_analysis/sleep_health/results/critical_resolution/tables)
-- quality 기반 cluster GEE 표: [10_quality_model_clustered_inference.csv](/Users/doyoung/Documents/Bigdata_analysis/sleep_health/results/critical_resolution/tables/10_quality_model_clustered_inference.csv)
 - 재현 스크립트: [critical_resolution_experiments.py](/Users/doyoung/Documents/Bigdata_analysis/sleep_health/analysis/critical_resolution_experiments.py)
 
-마지막 갱신 시각: `2026-04-10 18:45`
+마지막 갱신 시각: `2026-04-10 21:13`

@@ -117,7 +117,7 @@ MODEL_LABELS = {
     "enhanced": "Compressed + Interaction",
 }
 
-FINAL_MODEL = "orig_sleep_pa"
+FINAL_MODEL = "orig_quality_pa"
 MULTINOMIAL_FEATURES = ["age", "heart_rate", "map_bp", "pulse_pressure", "sleep_deficit_7h", "sleep_stress_balance", "male", "bmi_risk"]
 
 
@@ -343,7 +343,7 @@ def repeated_binary_model_comparison(df: pd.DataFrame) -> tuple[pd.DataFrame, pd
 
     pairs = []
     deploy_df = fold_df[fold_df["scoring"] == "neg_log_loss"].copy()
-    for comparator in ["orig_sleep_hr", "orig_quality_pa", "enhanced", "compressed"]:
+    for comparator in [name for name in MODEL_FEATURES if name != FINAL_MODEL]:
         left = deploy_df[deploy_df["model"] == FINAL_MODEL].sort_values(["repeat", "fold"]).reset_index(drop=True)
         right = deploy_df[deploy_df["model"] == comparator].sort_values(["repeat", "fold"]).reset_index(drop=True)
         for metric in ["roc_auc", "f1", "brier", "ece"]:
@@ -450,7 +450,7 @@ def inference_alignment(df: pd.DataFrame) -> pd.DataFrame:
     X_dedup = sm.add_constant(dedup[features])
     glm = sm.GLM(dedup["has_sleep_disorder"], X_dedup, family=sm.families.Binomial()).fit()
     rows = []
-    for source, fit in [("Clustered GEE (full data)", gee), ("Deduplicated GLM", glm)]:
+    for source, fit in [("Profile-cluster GEE (full data)", gee), ("Deduplicated GLM", glm)]:
         ci = fit.conf_int()
         for feature in features:
             rows.append(
@@ -644,7 +644,7 @@ def plot_inference_alignment(or_df: pd.DataFrame) -> None:
     plt.xscale("log")
     plt.xlabel("Odds ratio (log scale)")
     plt.ylabel("")
-    plt.title("Inference Alignment: Clustered GEE vs Deduplicated GLM")
+    plt.title("Inference Alignment: Profile-cluster GEE vs Deduplicated GLM")
     plt.tight_layout()
     plt.savefig(FIG_DIR / "05_clustered_inference_alignment.png", dpi=220)
     plt.close()
@@ -684,7 +684,12 @@ def build_report(
     auc_winner = winner_df[winner_df["scoring"] == "roc_auc"].sort_values("winner_share", ascending=False).iloc[0]
     deploy_winner = winner_df[winner_df["scoring"] == "neg_log_loss"].sort_values("winner_share", ascending=False).iloc[0]
     best_cal = calibration_summary_df.iloc[0]
-    gee_dia = inference_df[(inference_df["source"] == "Clustered GEE (full data)") & (inference_df["feature"] == "diastolic_bp")].iloc[0]
+    final_label = MODEL_LABELS[FINAL_MODEL]
+    final_summary = deploy_summary.loc[deploy_summary["model"] == FINAL_MODEL].iloc[0]
+    gee_dia = inference_df[(inference_df["source"] == "Profile-cluster GEE (full data)") & (inference_df["feature"] == "diastolic_bp")].iloc[0]
+    gee_quality = inference_df[
+        (inference_df["source"] == "Profile-cluster GEE (full data)") & (inference_df["feature"] == "quality_of_sleep")
+    ]
     return f"""# 비판 포인트 해소를 위한 추가 검증 보고서
 
 ## 1. 왜 이 추가 실험이 필요했는가
@@ -707,7 +712,7 @@ def build_report(
 ### 2.2 반복 grouped calibration / threshold 재검증
 
 - 이유: `0.5 threshold 사용 가능`이라는 문장을 single holdout이 아니라 반복 split 기준으로 확인해야 했다.
-- 방법: 최종 기본 추천 모델 `Original: Sleep + PA`에 대해
+- 방법: 최종 prediction-first 후보 `{final_label}`에 대해
   - `roc_auc` 기준 튜닝
   - `neg_log_loss` 기준 튜닝
   - `raw probability`
@@ -718,7 +723,7 @@ def build_report(
 
 - 이유: 예측은 전체 데이터, 해석은 deduplicated 데이터라는 층위 차이를 줄이기 위해서다.
 - 방법: 최종 모델에 대해
-  - `Clustered GEE (profile_group cluster)`
+  - `Profile-cluster GEE (profile_group cluster)`
   - `Deduplicated GLM`
   을 나란히 적합해 OR를 비교했다.
 
@@ -761,8 +766,8 @@ def build_report(
 
 {markdown_table(pair_df)}
 
-- `Original: Sleep + PA`는 `neg_log_loss` 기준 비교에서 `Compressed Derived`보다 더 안정적인 기본형 후보로 남았다.
-- 다만 `Original: Quality + PA`, `Original: Sleep + HR`, `Compressed + Interaction`과의 차이는 여전히 크지 않아, 메인 권고는 “압도적 superiority”보다 “확률 품질과 해석성을 함께 본 보수적 선택”으로 읽는 편이 맞다.
+- `{final_label}`는 repeated grouped `neg_log_loss` 기준에서 평균 `ROC-AUC={final_summary["roc_auc_mean"]:.3f}`, `F1={final_summary["f1_mean"]:.3f}`, `Brier={final_summary["brier_mean"]:.3f}`, `ECE={final_summary["ece_mean"]:.3f}`를 기록했다.
+- 다만 paired difference를 보면 다른 상위 모델과의 차이는 여전히 작다. 따라서 메인 권고는 “압도적 superiority”보다 “확률 품질과 screening 실용성을 함께 본 prediction-first 선택”으로 읽는 편이 맞다.
 
 ## 4. threshold와 calibration 비판은 얼마나 해소됐는가
 
@@ -779,7 +784,7 @@ def build_report(
 
 해석상 중요한 결론은 두 가지다.
 
-1. 이전의 “0.5 threshold가 실용적으로 작동한다”는 문장은 repeated grouped 기준에서도 **완전히 무너지지 않았다**.
+1. 이전의 “0.5 threshold가 실용적으로 작동한다”는 문장은 `{final_label}` 기준 repeated grouped 결과에서도 **완전히 무너지지 않았다**.
 2. 이번 데이터에서는 `neg_log_loss` 기준으로 직접 튜닝한 raw probability가 이미 가장 안정적이었고, Platt calibration이 항상 추가 이득을 주지는 않았다.
 
 즉, 이전 비판 포인트였던 “single holdout threshold 의존” 문제는 이번 실험으로 상당 부분 해소됐고, 동시에 **운영 기준에서는 calibration 자체보다 튜닝 objective를 확률 품질에 맞추는 것이 더 중요하다**는 구체적 지침까지 얻었다.
@@ -792,9 +797,10 @@ def build_report(
 
 ### 5.2 핵심 해석
 
-- `Diastolic BP`는 clustered GEE에서도 OR=`{gee_dia["odds_ratio"]:.3f}`로 유지됐고, 95% CI도 1을 넘는 안정적 신호였다.
+- `Diastolic BP`는 profile-cluster GEE에서도 OR=`{gee_dia["odds_ratio"]:.3f}`로 유지됐고, 95% CI도 1을 넘는 안정적 신호였다.
 - 즉, 이전에 deduplicated 해석모델에서 보였던 핵심 메시지인 “이완기혈압 축이 가장 안정적이다”는 **cluster-aware full-data 추정에서도 유지**됐다.
-- 반면 `male`, `bmi_risk`, `sleep_duration`, `physical_activity_level`은 clustered GEE에서 불확실성이 더 크거나 유의성이 약했다.
+- 반면 다른 보조 변수들은 profile-cluster GEE에서 불확실성이 더 크거나 유의성이 약했다.
+{"- `Quality of Sleep`도 profile-cluster GEE에서 보호 방향 신호를 유지했다." if not gee_quality.empty else ""}
 
 따라서 이번 추가 실험으로 해석은 더 엄밀해졌다.
 
@@ -819,9 +825,9 @@ def build_report(
 ### 7.1 해소된 부분
 
 1. `threshold/calibration의 single-holdout 의존`
-   - repeated grouped split으로 다시 확인했고, calibration을 붙였을 때 더 안정적이라는 결론을 얻었다.
+   - repeated grouped split으로 다시 확인했고, `{final_label}` 기준으로는 calibration을 덧붙이는 것보다 `neg_log_loss` 기반 튜닝 자체가 더 중요하다는 결론을 얻었다.
 2. `예측 성능과 회귀 해석의 데이터 층위 차이`
-   - clustered GEE를 추가해 full-data cluster-aware inference를 제시했다.
+   - profile-cluster GEE를 추가해 full-data sensitivity inference를 제시했다.
 3. `이진 screening이 subtype 정보를 과도하게 잃는 문제`
    - repeated grouped multinomial validation으로 subtype 구조가 별도로 유지됨을 확인했다.
 
@@ -835,11 +841,11 @@ def build_report(
 
 이번 추가 검증까지 반영하면, 가장 엄밀한 최종 문장은 아래와 같다.
 
-> 현재 데이터에서 `수면장애 유무` screening을 위한 가장 안정적인 기본형 모델은 `Age + Sleep Duration + Physical Activity Level + Diastolic BP + male + bmi_risk` 조합이며, 이완기혈압은 repeated grouped validation과 cluster-aware inference를 모두 거쳐도 가장 안정적으로 유지되는 핵심 축이다.
+> 현재 데이터에서 `수면장애 유무` screening의 prediction-first 기본형은 `Age + Quality of Sleep + Physical Activity Level + Diastolic BP + male + bmi_risk` 조합이며, repeated grouped `neg_log_loss` 기준으로 가장 설득력 있는 확률 예측 품질을 보였다.
 
 동시에 실무 적용 문장은 이렇게 정리하는 것이 맞다.
 
-> 배치용 확률 예측에는 uncalibrated score보다 `calibrated probability`를 쓰는 편이 더 안전하며, subtype 해석이 필요할 때는 이진 모델만 보지 말고 다항 로지스틱 결과를 함께 제시해야 한다.
+> 어떤 모델을 쓰더라도 `Diastolic BP`는 repeated grouped validation과 profile-cluster GEE sensitivity analysis를 거쳐도 가장 안정적으로 유지되는 핵심 축이며, quality score를 활용할 수 있다면 `Quality + PA`를, 더 보수적인 baseline을 원하면 `Sleep + PA`를 함께 제시하는 것이 가장 정직하다.
 
 ## 9. 생성된 결과물
 
