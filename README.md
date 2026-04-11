@@ -13,6 +13,7 @@
 추가 보고서:
 
 - [분석 흐름과 실험 당위성 정리](results/final_synthesis/analysis_sequence_and_rationale_ko.md)
+- [분석 방법 설명서](results/final_synthesis/analysis_methods_reference_ko.md)
 - [인사이트 및 활용 요약](results/final_synthesis/insights_and_applications_ko.md)
 - [최종 엄밀성 보강 보고서](results/final_rigor_upgrade/final_rigor_upgrade_report_ko.md)
 - [Grouped Bootstrap 모델 비교 및 변수 안정성 후속 보고서](results/bootstrap_stability_followup/bootstrap_stability_followup_report_ko.md)
